@@ -1,0 +1,123 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.animate-fadeInUp {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+.animate-slideInRight {
+  animation: slideInRight 0.6s ease-out;
+}
+
+/* Custom scrollbar */
+.prose::-webkit-scrollbar {
+  width: 6px;
+}
+
+.prose::-webkit-scrollbar-track {
+  background: #F0F7F7;
+  border-radius: 3px;
+}
+
+.prose::-webkit-scrollbar-thumb {
+  background: #A5CFCF;
+  border-radius: 3px;
+}
+
+.prose::-webkit-scrollbar-thumb:hover {
+  background: #87BFBF;
+}
+
+
+/* Hover effects */
+.hover-lift {
+  transition: transform 0.2s ease-in-out;
+}
+
+.hover-lift:hover {
+  transform: translateY(-2px);
+}
+
+/* Custom gradient backgrounds */
+.bg-aliceblue-gradient {
+  background: linear-gradient(135deg, #F0F8FF 0%, #E6F3FF 50%, #DBEEFF 100%);
+}
+
+.bg-cadetblue-gradient {
+  background: linear-gradient(135deg, #5F9EA0 0%, #4C7E80 50%, #395F60 100%);
+}
+
+/* Custom button styles */
+.btn-cadetblue {
+  @apply bg-cadetblue-500 hover:bg-cadetblue-600 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200;
+}
+
+.btn-cadetblue-outline {
+  @apply border-2 border-cadetblue-500 text-cadetblue-500 hover:bg-cadetblue-500 hover:text-white font-medium py-2 px-4 rounded-lg transition-all duration-200;
+}
+
+/* Custom card styles */
+.card-aliceblue {
+  @apply bg-white border border-cadetblue-200 rounded-2xl shadow-lg;
+}
+
+/* Custom text styles */
+.text-gradient-cadetblue {
+  background: linear-gradient(135deg, #5F9EA0, #395F60);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Loading spinner with cadetblue theme */
+.spinner-cadetblue {
+  border: 4px solid #E1EFEF;
+  border-top: 4px solid #5F9EA0;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Custom focus styles */
+.focus-cadetblue:focus {
+  @apply outline-none ring-2 ring-cadetblue-500 ring-opacity-50;
+}
+
+/* Custom selection styles */
+::selection {
+  background-color: #C3DFDF;
+  color: #132020;
+}
+
+::-moz-selection {
+  background-color: #C3DFDF;
+  color: #132020;
+}
