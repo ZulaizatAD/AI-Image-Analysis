@@ -101,21 +101,23 @@ export default function App() {
         onSignUp={() => setShowSignUp(true)}
       />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {!userId ? (
           <LandingPage onSignUp={() => setShowSignUp(true)} />
         ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 xl:grid-cols-5 gap-8">
             {/* Upload Section */}
-            <ImageUpload
-              userProfile={userProfile}
-              onAnalyze={handleAnalyze}
-              loading={loading}
-              analysisError={error}
-            />
+            <div className="xl:col-span-2">
+              <ImageUpload
+                userProfile={userProfile}
+                onAnalyze={handleAnalyze}
+                loading={loading}
+                analysisError={error}
+              />
+            </div>
 
             {/* Results Section */}
-            <div className="space-y-6">
+            <div className="xl:col-span-3 space-y-6">
               {loading ? (
                 <AnalysisLoading />
               ) : result ? (

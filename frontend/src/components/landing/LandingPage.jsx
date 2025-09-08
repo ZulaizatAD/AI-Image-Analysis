@@ -5,10 +5,12 @@ import { FEATURES } from "../../utils/constants";
 const LandingPage = ({ onSignUp }) => {
   return (
     <div className="text-center py-16">
-      <div className="max-w-3xl mx-auto">
+      {/* Updated max-width for wider layout */}
+      <div className="max-w-5xl mx-auto">
         <HeroSection onSignUp={onSignUp} />
         
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+        {/* Updated grid for better spacing on wide screens */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
           {FEATURES.slice(0, 3).map((feature, index) => (
             <FeatureCard key={index} feature={feature} />
           ))}
