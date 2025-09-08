@@ -5,7 +5,6 @@ import {
   ClockIcon,
   CogIcon 
 } from "@heroicons/react/24/outline";
-// Remove CrownIcon import
 
 const UserProfile = ({ userProfile, onClose }) => {
   if (!userProfile) return null;

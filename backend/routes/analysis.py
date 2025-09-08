@@ -1,18 +1,19 @@
-from fastapi import APIRouter, File, UploadFile, HTTPException, Depends
+from fastapi import APIRouter, File, UploadFile, HTTPException, Depends, Response, Form
 from datetime import datetime
 from models.schemas import UserInfo, AnalysisResponse
 from services.auth import verify_clerk_token
 from services.rate_limiter import check_rate_limit
 from services.ai_service import analyze_food_image
+from services.pdf_service import pdf_generator
 from utils.helpers import encode_image, validate_file_type, validate_file_size
 from config.settings import settings
 
 router = APIRouter(tags=["analysis"])
 
-
 @router.post("/analyze-image", response_model=AnalysisResponse)
 async def analyze_image(
-    file: UploadFile = File(...), user: UserInfo = Depends(verify_clerk_token)
+    file: UploadFile = File(...), 
+    user: UserInfo = Depends(verify_clerk_token)
 ):
     """Analyze food image with rate limiting"""
 
@@ -27,12 +28,14 @@ async def analyze_image(
     # File validation
     if not validate_file_type(file.content_type):
         raise HTTPException(
-            status_code=400, detail="Invalid file type. Only JPEG and PNG are allowed."
+            status_code=400, 
+            detail="Invalid file type. Only JPEG and PNG are allowed."
         )
 
     if file.size and not validate_file_size(file.size):
         raise HTTPException(
-            status_code=400, detail="File size too large. Maximum size is 10MB."
+            status_code=400, 
+            detail="File size too large. Maximum size is 10MB."
         )
 
     try:
@@ -40,9 +43,7 @@ async def analyze_image(
         image_base64 = encode_image(contents)
 
         # Analyze image using AI service
-        analysis_result, analysis_id = await analyze_food_image(
-            image_base64, user.user_id
-        )
+        analysis_result, analysis_id = await analyze_food_image(image_base64, user.user_id)
 
         is_admin = user.user_id == settings.ADMIN_USER_ID
 
@@ -60,3 +61,35 @@ async def analyze_image(
             status_code=500,
             detail="An error occurred while processing the image. Please try again.",
         )
+
+@router.post("/generate-pdf")
+async def generate_pdf(
+    file: UploadFile = File(...),
+    analysis_text: str = Form(...),
+    user: UserInfo = Depends(verify_clerk_token)
+):
+    """Generate PDF with image and analysis"""
+    try:
+        # Read and encode image
+        contents = await file.read()
+        image_base64 = encode_image(contents)
+        
+        # Generate PDF using the correct method name
+        pdf_bytes = pdf_generator.create_pdf(
+            image_base64=image_base64,
+            analysis_text=analysis_text,
+            user_email=user.email
+        )
+        
+        # Return as download
+        filename = f"nutrition_analysis_{datetime.now().strftime('%Y%m%d_%H%M%S')}.pdf"
+        
+        return Response(
+            content=pdf_bytes,
+            media_type="application/pdf",
+            headers={"Content-Disposition": f"attachment; filename={filename}"}
+        )
+        
+    except Exception as e:
+        print(f"PDF generation error: {e}")
+        raise HTTPException(status_code=500, detail="Failed to generate PDF")

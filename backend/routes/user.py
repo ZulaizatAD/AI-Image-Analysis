@@ -1,16 +1,19 @@
 from fastapi import APIRouter, Depends
 from datetime import datetime
-from models.schemas import UserInfo, UserProfile, AnalysisHistory
+from models.schemas import UserInfo, UserProfile
 from services.auth import verify_clerk_token
 from config.database import get_db_connection
 from config.settings import settings
 
 router = APIRouter(prefix="/user", tags=["user"])
 
-
 @router.get("/profile", response_model=UserProfile)
 async def get_user_profile(user: UserInfo = Depends(verify_clerk_token)):
     """Get user profile and usage statistics"""
+    print(f"DEBUG: Getting profile for user: {user.user_id}")
+    print(f"DEBUG: Admin user ID: {settings.ADMIN_USER_ID}")
+    print(f"DEBUG: Is admin: {user.user_id == settings.ADMIN_USER_ID}")
+    
     conn = get_db_connection()
     cursor = conn.cursor()
 
@@ -40,6 +43,7 @@ async def get_user_profile(user: UserInfo = Depends(verify_clerk_token)):
     conn.close()
 
     is_admin = user.user_id == settings.ADMIN_USER_ID
+    print(f"DEBUG: Final is_admin value: {is_admin}")
 
     return UserProfile(
         user_id=user.user_id,
@@ -47,35 +51,8 @@ async def get_user_profile(user: UserInfo = Depends(verify_clerk_token)):
         is_admin=is_admin,
         daily_requests_used=daily_requests,
         daily_limit="Unlimited" if is_admin else settings.DAILY_LIMIT,
-        remaining_requests="Unlimited"
-        if is_admin
-        else settings.DAILY_LIMIT - daily_requests,
+        remaining_requests="Unlimited" if is_admin else settings.DAILY_LIMIT - daily_requests,
         total_requests=total_requests,
         today_analyses=today_analyses,
         member_since=created_at,
     )
-
-
-@router.get("/history")
-async def get_analysis_history(user: UserInfo = Depends(verify_clerk_token)):
-    """Get user's analysis history"""
-    conn = get_db_connection()
-    cursor = conn.cursor()
-
-    cursor.execute(
-        "SELECT id, analysis_result, created_at FROM analyses WHERE user_id = ? ORDER BY created_at DESC LIMIT 10",
-        (user.user_id,),
-    )
-    results = cursor.fetchall()
-    conn.close()
-
-    history = [
-        AnalysisHistory(
-            id=row[0],
-            preview=row[1][:200] + "..." if len(row[1]) > 200 else row[1],
-            created_at=row[2],
-        )
-        for row in results
-    ]
-
-    return {"history": history}

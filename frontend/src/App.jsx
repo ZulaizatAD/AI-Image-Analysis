@@ -22,6 +22,8 @@ export default function App() {
   const [backendStatus, setBackendStatus] = useState("checking");
   const [showSignIn, setShowSignIn] = useState(false);
   const [showSignUp, setShowSignUp] = useState(false);
+  const [originalFile, setOriginalFile] = useState(null);
+  const [userToken, setUserToken] = useState(null);
 
   // Check backend health on component mount
   useEffect(() => {
@@ -49,8 +51,10 @@ export default function App() {
 
     try {
       const token = await getToken();
+      setUserToken(token);
+      setOriginalFile(file);
+
       await analyzeFood(file, token, () => {
-        // Refresh user profile after successful analysis
         refreshProfile();
       });
     } catch (error) {
@@ -60,6 +64,8 @@ export default function App() {
 
   const handleReset = () => {
     resetAnalysis();
+    setOriginalFile(null); // Clear the file when resetting
+    setUserToken(null); // Clear the token when resetting
   };
 
   // Show loading while Clerk is initializing
@@ -113,7 +119,12 @@ export default function App() {
               {loading ? (
                 <AnalysisLoading />
               ) : result ? (
-                <AnalysisResult result={result} onReset={handleReset} />
+                <AnalysisResult
+                  result={result}
+                  onReset={handleReset}
+                  originalFile={originalFile}
+                  userToken={userToken}
+                />
               ) : (
                 <AnalysisPlaceholder />
               )}

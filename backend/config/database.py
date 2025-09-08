@@ -18,7 +18,7 @@ def init_db():
         )
     """)
     
-    # Analyses table
+    # Analyses table (NO image_data column)
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS analyses (
             id TEXT PRIMARY KEY,
