@@ -25,11 +25,17 @@ app.add_middleware(
         "http://127.0.0.1:5173",
         "https://ai-image-analysis-hazel.vercel.app/",
         "https://*.vercel.app",
+        "*"
     ],
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["*"],
 )
+
+# Preflight handler for OPTIONS requests
+@app.options("/{full_path:path}")
+async def options_handler():
+    return {"message": "OK"}
 
 # Include routers
 app.include_router(health.router)
@@ -42,7 +48,7 @@ app.include_router(admin.router)
 @app.get("/")
 async def root():
     return {
-        "message": "AI Nutrition Analyzer API",
+        "message": "AI Nutrition Analyser API",
         "status": "healthy",
         "version": settings.APP_VERSION,
         "docs": "/docs",
