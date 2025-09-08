@@ -64,8 +64,8 @@ export default function App() {
 
   const handleReset = () => {
     resetAnalysis();
-    setOriginalFile(null); // Clear the file when resetting
-    setUserToken(null); // Clear the token when resetting
+    setOriginalFile(null);
+    setUserToken(null);
   };
 
   // Show loading while Clerk is initializing
