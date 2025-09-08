@@ -46,7 +46,7 @@ const Header = ({
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
             <div className="bg-gradient-to-r from-cadetblue-400 to-cadetblue-600 p-2 rounded-lg">
-              <img src="/nutrient.png" alt="Nutrient" className="w-8 h-8" />
+              <img src="/nutrient.png" alt="Icon" className="w-8 h-8" />
             </div>
             <div>
               <h1 className="text-2xl font-bold text-cadetblue-900">
